@@ -1,0 +1,86 @@
+[
+  {
+    "id": 23,
+    "title": "Tesco says UK store closures put 2000 jobs at risk",
+    "company": "Tesco",
+    "sentiment": -0.9
+  },
+  {
+    "id": 90,
+    "title": "CRH's concrete bid for Holcim Lafarge assets",
+    "company": "CRH",
+    "sentiment": 0.3
+  },
+  {
+    "id": 91,
+    "title": "CRH's concrete bid for Holcim Lafarge assets",
+    "company": "Holcim Lafarge",
+    "sentiment": 0.3
+  },
+  {
+    "id": 98,
+    "title": "Reed Elsevier share price slides on underwhelming full-year results",
+    "company": "Reed Elsevier",
+    "sentiment": -0.9
+  },
+  {
+    "id": 239,
+    "title": "Kingfisher bid for Mr Bricolage runs into trouble",
+    "company": "Kingfisher",
+    "sentiment": -0.3
+  },
+  {
+    "id": 240,
+    "title": "Kingfisher bid for Mr Bricolage runs into trouble",
+    "company": "Mr Bricolage",
+    "sentiment": -0.3
+  },
+  {
+    "id": 261,
+    "title": "Glencore's annual results beat forecasts",
+    "company": "Glencore",
+    "sentiment": 0.9
+  },
+  {
+    "id": 304,
+    "title": "Diageo stays neutral on India boardroom turmoil",
+    "company": "Diageo",
+    "sentiment": -0.2
+  },
+  {
+    "id": 675,
+    "title": "Shell to Cut 6500 Jobs as Profit Drops",
+    "company": "Shell",
+    "sentiment": -1
+  },
+  {
+    "id": 1210,
+    "title": "Markets Shire up 2.5% and Baxalta up 6% on $32bn deal",
+    "company": "Shire",
+    "sentiment": 0.8
+  },
+{
+    "id": 1211,
+    "title": "Markets Shire up 2.5% and Baxalta up 6% on $32bn deal",
+    "company": "Baxalta",
+    "sentiment": 0.8
+  },
+  {
+    "id": 1374,
+    "title": "BP ends 27-year sponsorship of Tate as falling oil price takes toll",
+    "company": "BP",
+    "sentiment": -0.2
+  },
+  {
+    "id": 1658,
+    "title": "HSBC, Standard Chartered Lead Asia Bank Rout as U.K. Votes 'Out'",
+    "company": "HSBC",
+    "sentiment": -1
+  },
+  {
+    "id": 1659,
+    "title": "HSBC, Standard Chartered Lead Asia Bank Rout as U.K. Votes 'Out'",
+    "company": "Standard Chartered",
+    "sentiment": -1
+  }
+]
