@@ -10,13 +10,13 @@ import random
 
 def load_dataset():
     
-    TEXT   = data.Field(tokenize = 'spacy', tokenizer_language = 'en_core_web_sm', lower=True)
+    TEXT   = data.Field(tokenize = 'spacy', tokenizer_language = 'en_core_web_sm', lower=True, include_lengths = True)
     LABEL  = data.LabelField()
 
     fields = {'sentence':('sentence', TEXT), 'sentiment_label':('label', LABEL)}
 
     train_data, valid_data, test_data = data.TabularDataset.splits(
-                                                        path = "..\Data\DL_Data",
+                                                        path = "../Data/DL_Data",
                                                         train = 'train_data.csv',
                                                         test  = 'test_data.csv',
                                                         validation   = 'validation_data.csv',
@@ -26,7 +26,7 @@ def load_dataset():
     
     MAX_VOCAB_SIZE = 50000
 
-    TEXT.build_vocab(train_data, max_size = MAX_VOCAB_SIZE)
+    TEXT.build_vocab(train_data, max_size = MAX_VOCAB_SIZE, vectors = "glove.6B.100d", unk_init = torch.Tensor.normal_)
     LABEL.build_vocab(train_data)
     
     print(f"Unique tokens in TEXT vocabulary: {len(TEXT.vocab)}")
@@ -39,6 +39,7 @@ def load_dataset():
     BATCH_SIZE = 64
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(device)
 
     train_iterator, valid_iterator, test_iterator = data.BucketIterator.splits(
                                                                (train_data, valid_data, test_data), 

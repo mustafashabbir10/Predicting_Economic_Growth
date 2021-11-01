@@ -35,8 +35,10 @@ def train(model, iterator, optimizer, criterion, macro_f1):
     for batch in iterator:
         
         optimizer.zero_grad()
+
+        text, text_lengths = batch.sentence
                 
-        predictions = model(batch.sentence).squeeze(1)
+        predictions = model(text, text_lengths).squeeze(1)
         
         loss     = criterion(predictions, batch.label)
                 
@@ -63,7 +65,9 @@ def evaluate(model, iterator, criterion, macro_f1):
     
         for batch in iterator:
 
-            predictions = model(batch.sentence).squeeze(1)
+            text, text_lengths = batch.sentence
+
+            predictions = model(text, text_lengths).squeeze(1)
             
             loss = criterion(predictions, batch.label)
             
