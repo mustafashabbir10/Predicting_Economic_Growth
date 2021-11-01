@@ -20,6 +20,8 @@ import torch.optim as optim
 from sklearn.metrics import f1_score
 import time
 import random
+from sklearn.metrics import classification_report
+
 warnings.filterwarnings("ignore")
 # pd.set_option('display.max_colwidth',999)
 # warnings.filterwarnings("*Truncation was not explicitly*")
@@ -100,7 +102,7 @@ def create_data_loader(df, tokenizer, max_len, batch_size, istest):
 
         ds = DataProcessor(
                             sentences   = df.sentence.to_numpy(),
-                            labels      = df.label.to_numpy(),
+                            labels      = df.sentiment_label.to_numpy(),
                             tokenizer   = tokenizer,
                             max_len=max_len)
     
@@ -172,31 +174,24 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def labelencoder(train_all, bakeoff_test, sst_dev, dev_all):
+def labelencoder(train, valid, test):
     le = LabelEncoder()
-    le.fit(train_all['label'].values)
-    train_all['label']    =  le.transform(train_all['label'])
-    bakeoff_test['label'] = le.transform(bakeoff_test['label'])
-    sst_dev['label']      = le.transform(sst_dev['label'])
-    dev_all['label']      = le.transform(dev_all['label'])
+    le.fit(train_all['sentiment_label'].values)
+    train['sentiment_label']        =  le.transform(train['sentiment_label'])
+    valid['sentiment_label']        = le.transform(valid['sentiment_label'])
+    test['sentiment_label']         = le.transform(test['sentiment_label'])
     
-    return le, train_all, bakeoff_test, sst_dev, dev_all
+    return le, train, valid, test
     
 def macro_f1(preds, y):
     """
     Returns macro f1 for the batch
     """
-    # f1_metric = F1Score('macro')
+
     top_pred = preds.argmax(1, keepdim = True)
-    # print('top pred')
-    # print(top_pred)
-    # print('actual label')
-    # print(y)
-    # correct = top_pred.eq(y.view_as(top_pred)).sum()
+
     macro_f1 = f1_score(y.cpu().data.numpy(),top_pred.cpu().data.numpy(), average='macro')
-    # print('macro_f1')
-    # print(macro_f1)
-    # acc = correct.float() / y.shape[0]
+
     return macro_f1
 
 def train(model, data_loader, optimizer, criterion, device):
@@ -211,7 +206,7 @@ def train(model, data_loader, optimizer, criterion, device):
         optimizer.zero_grad()
         
         input_ids = batch['input_ids'].to(device)
-        label     = batch['labels'].to(device)
+        label     = batch['sentiment_label'].to(device)
 
         predictions = model(input_ids).squeeze(1)
         
@@ -242,7 +237,7 @@ def evaluate(model, data_loader, criterion,device):
         for batch in data_loader:
 
             input_ids = batch['input_ids'].to(device)
-            label     = batch['labels'].to(device)
+            label     = batch['sentiment_label'].to(device)
             predictions = model(input_ids).squeeze(1)
             
             loss = criterion(predictions, label)
@@ -255,6 +250,30 @@ def evaluate(model, data_loader, criterion,device):
             epoch_macro_f1 += macro_f1_.item()
         
     return epoch_loss / len(data_loader), epoch_macro_f1/ len(data_loader)
+
+def predict_on_test(model, test_dataloader, device):
+    model.eval()
+    
+    sentences   = []
+    labels      = []
+    predictions = []
+
+    with torch.no_grad():
+        for d in test_dataloader:
+            batch_sentences = d['sentence']
+            input_ids = d['input_ids'].to(device)
+            batch_predictions = model(input_ids).squeeze(1).argmax(1, keepdim=True)
+
+            sentences.extend(batch_sentences)
+            predictions.extend(batch_predictions)
+            labels.extend(d['label'])
+
+    predictions   = torch.stack(predictions).cpu()
+    predictions_list = list(map(int,list(predictions.numpy().flatten())))
+    
+    print('Classification report on Test data:')
+    print(classification_report(labels, predictions_list))
+
 
 def predict_unseen_test(model, unseen_test_dataloader, device):
     model.eval()
@@ -294,34 +313,15 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print('device %s'%device)
     
-    SST_HOME    = os.path.join('data/', 'sentiment')
-    sst_train   = sst.train_reader(SST_HOME,include_subtrees=False)
-    sst_dev     = sst.dev_reader(SST_HOME)
-    bakeoff_dev = sst.bakeoff_dev_reader(SST_HOME)
-    
-    ### Creating training data
-    print('Create training and test')
-    bakeoff_train = bakeoff_dev.sample(frac=0.7, random_state=42)
-    bakeoff_test_  = bakeoff_dev[~bakeoff_dev.index.isin(bakeoff_train.index)]
+    train_data = pd.read_csv('../Data/Data_DL/train_data.csv')
+    valid_data = pd.read_csv('../Data/Data_DL/valid_data.csv')
+    test_data = pd.read_csv('../Data/Data_DL/test_data.csv')
 
-    train_all = pd.concat([sst_train, bakeoff_train])
-    
-    dev_all   = pd.concat([sst_dev, bakeoff_test_])
-
-        #predict on unseen test data
-    print('Creating unseen test data')
-    bakeoff_test = sst.bakeoff_test_reader(SST_HOME)
-    sst_test = sst.test_reader(SST_HOME)
-    bakeoff_test['dataset'] = 'bakeoff'
-    sst_test['dataset'] = 'sst3'
-    test_df = pd.concat((bakeoff_test, sst_test))
-
-    
     #label encoding
     print('label encoding')
-    le, train_all, bakeoff_test_, sst_dev, dev_all = labelencoder(train_all, bakeoff_test_, sst_dev, dev_all)
+    le, train_data, valid_data, test_data = labelencoder(train_data, valid_data, test_data)
     
-    bert_model_weight = 'bert-base-cased'
+    bert_model_weight = 'ProsusAI/finbert'
 
     #tokenizer to use
     bert_tokenizer = BertTokenizer.from_pretrained(bert_model_weight)
@@ -333,13 +333,9 @@ def main():
     print('Data prep')
     BATCH_SIZE = 32
     MAX_LEN    = 32
-    train_data_loader        = create_data_loader(train_all, bert_tokenizer, MAX_LEN, BATCH_SIZE, False)
-    sst_dev_data_loader      = create_data_loader(sst_dev, bert_tokenizer, MAX_LEN, BATCH_SIZE, False)
-    bakeoff_test_data_loader = create_data_loader(bakeoff_test_, bert_tokenizer, MAX_LEN, BATCH_SIZE, False)
-    dev_all_data_loader      = create_data_loader(dev_all, bert_tokenizer, MAX_LEN, BATCH_SIZE, False)
-    unseen_test_dataloader   = create_data_loader(test_df, bert_tokenizer, MAX_LEN, BATCH_SIZE, True)
-    
-    
+    train_data_loader  = create_data_loader(train_data, bert_tokenizer, MAX_LEN, BATCH_SIZE, False)
+    valid_data_loader  = create_data_loader(valid_data, bert_tokenizer, MAX_LEN, BATCH_SIZE, False)
+    test_data_loader   = create_data_loader(test_data, bert_tokenizer, MAX_LEN, BATCH_SIZE, False)    
     
     #model definition
     print('Defining Model')
@@ -375,33 +371,37 @@ def main():
 
         start_time = time.time()
 
-        train_loss, train_f1_mac                          = train(model, train_data_loader, optimizer, criterion, device)
-        sst_bakeoff_valid_loss, sst_bakeoff_valid_f1_mac  = evaluate(model, dev_all_data_loader, criterion, device)
-#         bakeoff_valid_loss, bakeoff_valid_f1_mac = evaluate(model, bakeoff_test_data_loader, criterion)
+        train_loss, train_f1_mac  = train(model, train_data_loader, optimizer, criterion, device)
+        valid_loss, valid_f1_mac  = evaluate(model, valid_data_loader, criterion, device)
 
         end_time = time.time()
 
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
 
-        if sst_bakeoff_valid_loss < best_valid_loss:
-            best_valid_loss = sst_bakeoff_valid_loss
-            torch.save(model.state_dict(), 'BERT-biLSTM.pt')
+        if valid_loss < best_valid_loss:
+            best_valid_loss = valid_loss
+            torch.save(model.state_dict(), 'FinBERT-biLSTM.pt')
 
         print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_f1_mac*100:.2f}%')
-        print(f'\t SST + bakeoff Val. Loss: {sst_bakeoff_valid_loss:.3f} |  SST + bakeoff Val. F1-macro: {sst_bakeoff_valid_f1_mac*100:.2f}%')
-#         print(f'\t bakeoff Val. Loss: {bakeoff_valid_loss:.3f} |  bakeoff Val. F1-macro: {bakeoff_valid_f1_mac*100:.2f}%')
+        print(f'\t SST + bakeoff Val. Loss: {valid_loss:.3f} |  SST + bakeoff Val. F1-macro: {valid_f1_mac*100:.2f}%')
 
 
-    #predict on unseen test data
-    print('Predicting on unseen test data using the best model')
-
-    prediction_df = predict_unseen_test(model, unseen_test_dataloader, device)
-    prediction_df['prediction'] = list(le.inverse_transform(prediction_df['prediction']))
+    #predict on test data
     
-    test_df_out  = pd.merge(prediction_df, test_df, on = ['sentence'])
+        
+        
+        
+    #predict on unseen test data
+    
+#     print('Predicting on test data using the best model')
 
-    test_df_out.to_csv('cs224u-sentiment-bakeoff-entry.csv')
+#     prediction_df = predict_unseen_test(model, unseen_test_dataloader, device)
+#     prediction_df['prediction'] = list(le.inverse_transform(prediction_df['prediction']))
+    
+#     test_df_out  = pd.merge(prediction_df, test_df, on = ['sentence'])
+
+#     test_df_out.to_csv('cs224u-sentiment-bakeoff-entry.csv')
     
     
 if __name__== '__main__':
