@@ -16,6 +16,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+
 def main():
 
     torch.manual_seed(42)
@@ -31,6 +32,7 @@ def main():
     train_data = pd.read_csv('/home/scpdxcs/Github/FinalProject/Data/DL_Data/train_data.csv')
     valid_data = pd.read_csv('/home/scpdxcs/Github/FinalProject/Data/DL_Data/validation_data.csv')
     test_data = pd.read_csv('/home/scpdxcs/Github/FinalProject/Data/DL_Data/test_data.csv')
+
 
     #label encoding
     print('Encoding Labels')
@@ -56,7 +58,7 @@ def main():
     print('Defining Model')
     HIDDEN_DIM = 256
     OUTPUT_DIM = 3
-    N_LAYERS = 2
+    N_LAYERS = 1
     BIDIRECTIONAL = True
     DROPOUT = 0.5
     model = BERTbiLSTM(bert_model,
@@ -79,7 +81,7 @@ def main():
     
     #training
     print('Start model training')
-    N_EPOCHS = 80
+    N_EPOCHS = 40
     best_valid_loss = float('inf')
     for epoch in range(N_EPOCHS):
 
@@ -94,7 +96,7 @@ def main():
 
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(model.state_dict(), 'FinBERT-biLSTM_2.pt')
+            torch.save(model.state_dict(), 'FinBERT-biLSTM.pt')
 
         print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_f1_mac*100:.2f}%')
