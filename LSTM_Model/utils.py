@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
-
+from sklearn.metrics import classification_report
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
