@@ -33,7 +33,7 @@ def main():
     model.to(device)
     
     print('Load news articles')
-    unlabeled_news_df = pd.read_csv('sample_test.csv')
+    unlabeled_news_df = pd.read_csv('sample_test.csv')   ### CHANGE ME
     
     print('Data prep')
     BATCH_SIZE = 32
