@@ -1,6 +1,5 @@
 """
-LSTM Model:
-
+LSTM Model using BERT encodings
 """
 
 import math
@@ -10,7 +9,6 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-logger = logging.getLogger(__name__)
 
 class BERTbiLSTM(nn.Module):
     

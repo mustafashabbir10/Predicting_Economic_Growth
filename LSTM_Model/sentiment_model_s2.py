@@ -11,7 +11,7 @@ import torch.nn as nn
 import torch
 # from torch_rnn_classifier import TorchRNNClassifier
 # from torch_tree_nn import TorchTreeNN
-import sst
+# import sst
 import utils
 from sklearn.preprocessing import LabelEncoder
 import warnings
@@ -176,7 +176,7 @@ def count_parameters(model):
 
 def labelencoder(train, valid, test):
     le = LabelEncoder()
-    le.fit(train_all['sentiment_label'].values)
+    le.fit(train['sentiment_label'].values)
     train['sentiment_label']        =  le.transform(train['sentiment_label'])
     valid['sentiment_label']        = le.transform(valid['sentiment_label'])
     test['sentiment_label']         = le.transform(test['sentiment_label'])
@@ -206,7 +206,7 @@ def train(model, data_loader, optimizer, criterion, device):
         optimizer.zero_grad()
         
         input_ids = batch['input_ids'].to(device)
-        label     = batch['sentiment_label'].to(device)
+        label     = batch['labels'].to(device)
 
         predictions = model(input_ids).squeeze(1)
         
@@ -237,7 +237,7 @@ def evaluate(model, data_loader, criterion,device):
         for batch in data_loader:
 
             input_ids = batch['input_ids'].to(device)
-            label     = batch['sentiment_label'].to(device)
+            label     = batch['labels'].to(device)
             predictions = model(input_ids).squeeze(1)
             
             loss = criterion(predictions, label)
@@ -384,11 +384,11 @@ def main():
 
         print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_f1_mac*100:.2f}%')
-        print(f'\t SST + bakeoff Val. Loss: {valid_loss:.3f} |  SST + bakeoff Val. F1-macro: {valid_f1_mac*100:.2f}%')
+        print(f'\t Val. Loss: {valid_loss:.3f} | Val. F1-macro: {valid_f1_mac*100:.2f}%')
 
 
     #predict on test data
-    
+    predict_on_test(model, test_data_loader, device)
         
         
         
