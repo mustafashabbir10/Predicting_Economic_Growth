@@ -1,4 +1,5 @@
-from utils import labelencoder, predict_unseen_test, Test_DataProcessor, create_data_loader
+from utils import labelencoder, predict_unseen_test
+from load_data import Test_DataProcessor, create_data_loader
 import torch
 from LSTM_model import BERTbiLSTM
 from transformers import BertModel, BertTokenizer
