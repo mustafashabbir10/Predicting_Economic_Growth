@@ -4,6 +4,9 @@ import torch
 from LSTM_model import BERTbiLSTM
 from transformers import BertModel, BertTokenizer
 import pandas as pd
+import warnings
+warnings.filterwarnings("ignore")
+
 
 
 def main():
