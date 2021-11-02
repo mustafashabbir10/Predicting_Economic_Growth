@@ -60,6 +60,7 @@ from zipfile import ZipFile
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import sys, time
+from interruptingcow import timeout 
 
 READ_FREQ = 20
 SAVING_FREQ = 30
@@ -87,17 +88,19 @@ for gdelt_list_counter in range(1500, 3101):#len(gdelt_list)):
             exception_count = 0
             
             try:
-                soup = BeautifulSoup(urlopen(news_url).read(), features="html.parser")
-                for script in soup(["script", "style"]):    # kill all script and style elements
-                    script.decompose()
-                text = soup.get_text()    # get text
-                lines = (line.strip() for line in text.splitlines())    # break into lines and remove leading and trailing space on each
-                chunks = (phrase.strip() for line in lines for phrase in line.split("  "))    # break multi-headlines into a line each
-                text = '\n'.join(chunk for chunk in chunks if chunk)    # drop blank lines
-                text_matrix = text_matrix.append({'sentence': text}, ignore_index=True)
-                #sentiment_lr = lr_model.predict(pd.Series(text))[0]
-                #sentiment_lstm = lstm_model.predict(pd.Series(text))[0]
-            except:
+                with timeout(60, exception = RuntimeError):
+                    try:
+                        soup = BeautifulSoup(urlopen(news_url).read(), features="html.parser")
+                        for script in soup(["script", "style"]):    # kill all script and style elements
+                            script.decompose()
+                        text = soup.get_text()    # get text
+                        lines = (line.strip() for line in text.splitlines())    # break into lines and remove leading and trailing space on each
+                        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))    # break multi-headlines into a line each
+                        text = '\n'.join(chunk for chunk in chunks if chunk)    # drop blank lines
+                        text_matrix = text_matrix.append({'sentence': text}, ignore_index=True)
+                    except:
+                        exception_count += 1
+            except RuntimeError: 
                 exception_count += 1
         
         current_time = time.time()
