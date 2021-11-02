@@ -1,62 +1,105 @@
 import os
 import sys
 import torch
-from torch.nn import functional as F
 import numpy as np
-from torchtext.legacy import data
-from torchtext.vocab import Vectors, GloVe
+from torch.utils.data import Dataset, DataLoader
+import pandas as pd
+import torch.nn as nn
+import torch
 import random
 
 
-def load_dataset():
+class DataProcessor(Dataset):
     
-    TEXT   = data.Field(tokenize = 'spacy', tokenizer_language = 'en_core_web_sm', lower=True, include_lengths = True)
-    LABEL  = data.LabelField()
+    def __init__(self, sentences, labels, tokenizer, max_len):
+        self.sentences  = sentences
+        self.labels     = labels
+        self.tokenizer  = tokenizer
+        self.max_len    = max_len
+        
+    def __len__(self):
+        return len(self.sentences)
+    
+    def __getitem__(self, item):
+        
+        sentence  = str(self.sentences[item])
 
-    fields = {'sentence':('sentence', TEXT), 'sentiment_label':('label', LABEL)}
+        label = self.labels[item]
+        
+        encoding = self.tokenizer.encode_plus(sentence,
+                                              add_special_tokens    = True,
+                                              max_length            = self.max_len,
+                                              truncation            = True,
+                                              return_token_type_ids = False,
+                                              pad_to_max_length     = True,
+                                              return_attention_mask = True,
+                                              return_tensors        = 'pt')
+        
+        return {
+                'sentence'      : sentence,
+                'input_ids'     : encoding['input_ids'].flatten(),
+                'attention_mask': encoding['attention_mask'].flatten(),
+                'labels'        : torch.tensor(label, dtype=torch.long)
+                }
 
-    train_data, valid_data, test_data = data.TabularDataset.splits(
-                                                        path = "../Data/DL_Data",
-                                                        train = 'train_data.csv',
-                                                        test  = 'test_data.csv',
-                                                        validation   = 'validation_data.csv',
-                                                        format = 'csv',
-                                                        fields = fields)
-    
-    
-    MAX_VOCAB_SIZE = 50000
 
-    TEXT.build_vocab(train_data, max_size = MAX_VOCAB_SIZE, vectors = "glove.6B.100d", unk_init = torch.Tensor.normal_)
-    LABEL.build_vocab(train_data)
-    
-    print(f"Unique tokens in TEXT vocabulary: {len(TEXT.vocab)}")
-    print(f"Unique tokens in LABEL vocabulary: {len(LABEL.vocab)}")
-    
-    #print ("Vector size of Text Vocabulary: ", TEXT.vocab.vectors.size())
-    
-    print(TEXT.vocab.freqs.most_common(20))
-    
-    BATCH_SIZE = 64
+class Test_DataProcessor(Dataset):
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(device)
+    def __init__(self, sentences, tokenizer, max_len):
+        self.sentences   = sentences
+        self.tokenizer   = tokenizer
+        self.max_len     = max_len
 
-    train_iterator, valid_iterator, test_iterator = data.BucketIterator.splits(
-                                                               (train_data, valid_data, test_data), 
-                                                               batch_size = BATCH_SIZE,
-                                                               sort_key=lambda x: len(x.sentence),
-                                                               repeat=True,
-                                                               sort=False,
-                                                               shuffle=True,
-                                                               sort_within_batch=True,
-                                                               device = device)
-    
-    vocab_size = len(TEXT.vocab)
-    
-    return TEXT, LABEL, vocab_size, train_iterator, valid_iterator, test_iterator
-    
-    
+    def __len__(self):
+        return len(self.sentences)
+
+    def __getitem__(self, item):
+
+        sentence  = str(self.sentences[item])
+
+        encoding = self.tokenizer.encode_plus(sentence,
+                                              add_special_tokens    = True,
+                                              max_length            = self.max_len,
+                                              truncation            = True,
+                                              return_token_type_ids = False,
+                                              pad_to_max_length     = True,
+                                              return_attention_mask = True,
+                                              return_tensors        = 'pt')
+
+        return {
+                'sentence'      : sentence,
+                'input_ids'     : encoding['input_ids'].flatten(),
+                'attention_mask': encoding['attention_mask'].flatten()
+                }
 
     
+def create_data_loader(df, tokenizer, max_len, batch_size, istest):
+    
+
+    if istest==False:
+
+        ds = DataProcessor(
+                            sentences   = df.sentence.to_numpy(),
+                            labels      = df.sentiment_label.to_numpy(),
+                            tokenizer   = tokenizer,
+                            max_len=max_len)
+    
+        return DataLoader(ds,
+                          batch_size=batch_size,
+                          num_workers=2
+                          )
+
+    else:
+
+        ds = Test_DataProcessor(
+                            sentences   = df.sentence.to_numpy(),
+                            tokenizer   = tokenizer,
+                            max_len=max_len)
+
+        return DataLoader(ds,
+                          batch_size=batch_size,
+                          num_workers=2
+                          )
+
     
 

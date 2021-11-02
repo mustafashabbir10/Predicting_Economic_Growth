@@ -11,7 +11,7 @@ import torch.nn as nn
 import torch
 # from torch_rnn_classifier import TorchRNNClassifier
 # from torch_tree_nn import TorchTreeNN
-import sst
+
 import utils
 from sklearn.preprocessing import LabelEncoder
 import warnings
@@ -176,7 +176,7 @@ def count_parameters(model):
 
 def labelencoder(train, valid, test):
     le = LabelEncoder()
-    le.fit(train_all['sentiment_label'].values)
+    le.fit(train['sentiment_label'].values)
     train['sentiment_label']        =  le.transform(train['sentiment_label'])
     valid['sentiment_label']        = le.transform(valid['sentiment_label'])
     test['sentiment_label']         = le.transform(test['sentiment_label'])
@@ -206,7 +206,7 @@ def train(model, data_loader, optimizer, criterion, device):
         optimizer.zero_grad()
         
         input_ids = batch['input_ids'].to(device)
-        label     = batch['sentiment_label'].to(device)
+        label     = batch['labels'].to(device)
 
         predictions = model(input_ids).squeeze(1)
         
@@ -237,7 +237,7 @@ def evaluate(model, data_loader, criterion,device):
         for batch in data_loader:
 
             input_ids = batch['input_ids'].to(device)
-            label     = batch['sentiment_label'].to(device)
+            label     = batch['labels'].to(device)
             predictions = model(input_ids).squeeze(1)
             
             loss = criterion(predictions, label)
@@ -266,7 +266,7 @@ def predict_on_test(model, test_dataloader, device):
 
             sentences.extend(batch_sentences)
             predictions.extend(batch_predictions)
-            labels.extend(d['label'])
+            labels.extend(d['labels'])
 
     predictions   = torch.stack(predictions).cpu()
     predictions_list = list(map(int,list(predictions.numpy().flatten())))
@@ -313,9 +313,9 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print('device %s'%device)
     
-    train_data = pd.read_csv('../Data/Data_DL/train_data.csv')
-    valid_data = pd.read_csv('../Data/Data_DL/valid_data.csv')
-    test_data = pd.read_csv('../Data/Data_DL/test_data.csv')
+    train_data = pd.read_csv('/home/scpdxcs/Github/FinalProject/Data/DL_Data/train_data.csv')
+    valid_data = pd.read_csv('/home/scpdxcs/Github/FinalProject/Data/DL_Data/validation_data.csv')
+    test_data = pd.read_csv('/home/scpdxcs/Github/FinalProject/Data/DL_Data/test_data.csv')
 
     #label encoding
     print('label encoding')
@@ -383,15 +383,13 @@ def main():
             torch.save(model.state_dict(), 'FinBERT-biLSTM.pt')
 
         print(f'Epoch: {epoch+1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
-        print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_f1_mac*100:.2f}%')
-        print(f'\t SST + bakeoff Val. Loss: {valid_loss:.3f} |  SST + bakeoff Val. F1-macro: {valid_f1_mac*100:.2f}%')
-
+        print(f'\tTrain Loss: {train_loss:.3f} | Train F1-macro: {train_f1_mac*100:.2f}%')
+        print(f'\tVal. Loss: {valid_loss:.3f} |  Val. F1-macro: {valid_f1_mac*100:.2f}%')
 
     #predict on test data
-    
-        
-        
-        
+    predict_on_test(model, test_data_loader, device)
+
+
     #predict on unseen test data
     
 #     print('Predicting on test data using the best model')

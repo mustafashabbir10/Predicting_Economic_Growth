@@ -1,0 +1,137 @@
+device cuda
+label encoding
+Data prep
+Defining Model
+The model has 920,323 trainable parameters
+Start model training
+Epoch: 01 | Epoch Time: 0m 21s
+	Train Loss: 0.588 | Train F1-macro: 70.49%
+	Val. Loss: 0.533 |  Val. F1-macro: 73.02%
+Epoch: 02 | Epoch Time: 0m 21s
+	Train Loss: 0.530 | Train F1-macro: 73.38%
+	Val. Loss: 0.522 |  Val. F1-macro: 72.80%
+Epoch: 03 | Epoch Time: 0m 21s
+	Train Loss: 0.506 | Train F1-macro: 75.45%
+	Val. Loss: 0.507 |  Val. F1-macro: 74.72%
+Epoch: 04 | Epoch Time: 0m 21s
+	Train Loss: 0.490 | Train F1-macro: 75.88%
+	Val. Loss: 0.512 |  Val. F1-macro: 73.87%
+Epoch: 05 | Epoch Time: 0m 21s
+	Train Loss: 0.480 | Train F1-macro: 76.83%
+	Val. Loss: 0.511 |  Val. F1-macro: 75.04%
+Epoch: 06 | Epoch Time: 0m 22s
+	Train Loss: 0.468 | Train F1-macro: 77.51%
+	Val. Loss: 0.512 |  Val. F1-macro: 74.61%
+Epoch: 07 | Epoch Time: 0m 21s
+	Train Loss: 0.458 | Train F1-macro: 77.22%
+	Val. Loss: 0.507 |  Val. F1-macro: 73.94%
+Epoch: 08 | Epoch Time: 0m 22s
+	Train Loss: 0.438 | Train F1-macro: 78.59%
+	Val. Loss: 0.523 |  Val. F1-macro: 73.14%
+Epoch: 09 | Epoch Time: 0m 22s
+	Train Loss: 0.430 | Train F1-macro: 78.76%
+	Val. Loss: 0.544 |  Val. F1-macro: 73.08%
+Epoch: 10 | Epoch Time: 0m 22s
+	Train Loss: 0.403 | Train F1-macro: 80.84%
+	Val. Loss: 0.552 |  Val. F1-macro: 73.10%
+Epoch: 11 | Epoch Time: 0m 22s
+	Train Loss: 0.403 | Train F1-macro: 80.12%
+	Val. Loss: 0.560 |  Val. F1-macro: 72.93%
+Epoch: 12 | Epoch Time: 0m 22s
+	Train Loss: 0.376 | Train F1-macro: 81.45%
+	Val. Loss: 0.557 |  Val. F1-macro: 71.41%
+Epoch: 13 | Epoch Time: 0m 22s
+	Train Loss: 0.366 | Train F1-macro: 83.08%
+	Val. Loss: 0.566 |  Val. F1-macro: 72.31%
+Epoch: 14 | Epoch Time: 0m 22s
+	Train Loss: 0.353 | Train F1-macro: 83.73%
+	Val. Loss: 0.585 |  Val. F1-macro: 72.45%
+Epoch: 15 | Epoch Time: 0m 22s
+	Train Loss: 0.330 | Train F1-macro: 84.60%
+	Val. Loss: 0.603 |  Val. F1-macro: 72.64%
+Epoch: 16 | Epoch Time: 0m 22s
+	Train Loss: 0.327 | Train F1-macro: 85.05%
+	Val. Loss: 0.594 |  Val. F1-macro: 72.74%
+Epoch: 17 | Epoch Time: 0m 22s
+	Train Loss: 0.303 | Train F1-macro: 85.65%
+	Val. Loss: 0.602 |  Val. F1-macro: 72.38%
+Epoch: 18 | Epoch Time: 0m 22s
+	Train Loss: 0.288 | Train F1-macro: 85.94%
+	Val. Loss: 0.616 |  Val. F1-macro: 73.25%
+Epoch: 19 | Epoch Time: 0m 22s
+	Train Loss: 0.266 | Train F1-macro: 88.18%
+	Val. Loss: 0.650 |  Val. F1-macro: 71.70%
+Epoch: 20 | Epoch Time: 0m 22s
+	Train Loss: 0.260 | Train F1-macro: 87.70%
+	Val. Loss: 0.675 |  Val. F1-macro: 72.35%
+Epoch: 21 | Epoch Time: 0m 22s
+	Train Loss: 0.241 | Train F1-macro: 89.41%
+	Val. Loss: 0.720 |  Val. F1-macro: 71.07%
+Epoch: 22 | Epoch Time: 0m 22s
+	Train Loss: 0.231 | Train F1-macro: 90.23%
+	Val. Loss: 0.719 |  Val. F1-macro: 72.08%
+Epoch: 23 | Epoch Time: 0m 22s
+	Train Loss: 0.219 | Train F1-macro: 90.03%
+	Val. Loss: 0.713 |  Val. F1-macro: 72.76%
+Epoch: 24 | Epoch Time: 0m 22s
+	Train Loss: 0.214 | Train F1-macro: 90.21%
+	Val. Loss: 0.793 |  Val. F1-macro: 72.78%
+Epoch: 25 | Epoch Time: 0m 22s
+	Train Loss: 0.202 | Train F1-macro: 90.95%
+	Val. Loss: 0.755 |  Val. F1-macro: 73.23%
+Epoch: 26 | Epoch Time: 0m 22s
+	Train Loss: 0.206 | Train F1-macro: 90.79%
+	Val. Loss: 0.778 |  Val. F1-macro: 72.09%
+Epoch: 27 | Epoch Time: 0m 22s
+	Train Loss: 0.194 | Train F1-macro: 91.02%
+	Val. Loss: 0.744 |  Val. F1-macro: 73.29%
+Epoch: 28 | Epoch Time: 0m 22s
+	Train Loss: 0.172 | Train F1-macro: 92.05%
+	Val. Loss: 0.868 |  Val. F1-macro: 71.50%
+Epoch: 29 | Epoch Time: 0m 22s
+	Train Loss: 0.183 | Train F1-macro: 91.83%
+	Val. Loss: 0.852 |  Val. F1-macro: 71.54%
+Epoch: 30 | Epoch Time: 0m 22s
+	Train Loss: 0.178 | Train F1-macro: 92.05%
+	Val. Loss: 0.867 |  Val. F1-macro: 72.99%
+Epoch: 31 | Epoch Time: 0m 22s
+	Train Loss: 0.174 | Train F1-macro: 92.15%
+	Val. Loss: 0.845 |  Val. F1-macro: 72.66%
+Epoch: 32 | Epoch Time: 0m 22s
+	Train Loss: 0.150 | Train F1-macro: 93.73%
+	Val. Loss: 0.939 |  Val. F1-macro: 71.21%
+Epoch: 33 | Epoch Time: 0m 22s
+	Train Loss: 0.153 | Train F1-macro: 93.40%
+	Val. Loss: 0.897 |  Val. F1-macro: 73.16%
+Epoch: 34 | Epoch Time: 0m 22s
+	Train Loss: 0.146 | Train F1-macro: 93.16%
+	Val. Loss: 0.914 |  Val. F1-macro: 73.58%
+Epoch: 35 | Epoch Time: 0m 22s
+	Train Loss: 0.137 | Train F1-macro: 94.68%
+	Val. Loss: 0.949 |  Val. F1-macro: 72.10%
+Epoch: 36 | Epoch Time: 0m 22s
+	Train Loss: 0.128 | Train F1-macro: 94.44%
+	Val. Loss: 0.970 |  Val. F1-macro: 72.73%
+Epoch: 37 | Epoch Time: 0m 22s
+	Train Loss: 0.134 | Train F1-macro: 93.96%
+	Val. Loss: 1.013 |  Val. F1-macro: 74.63%
+Epoch: 38 | Epoch Time: 0m 22s
+	Train Loss: 0.127 | Train F1-macro: 94.17%
+	Val. Loss: 1.042 |  Val. F1-macro: 71.64%
+Epoch: 39 | Epoch Time: 0m 22s
+	Train Loss: 0.118 | Train F1-macro: 94.76%
+	Val. Loss: 1.069 |  Val. F1-macro: 72.10%
+Epoch: 40 | Epoch Time: 0m 22s
+	Train Loss: 0.109 | Train F1-macro: 95.41%
+	Val. Loss: 1.077 |  Val. F1-macro: 71.31%
+Classification report on Test data:
+              precision    recall  f1-score   support
+
+           0       0.72      0.72      0.72       205
+           1       0.86      0.67      0.75       713
+           2       0.59      0.83      0.69       378
+
+    accuracy                           0.73      1296
+   macro avg       0.72      0.74      0.72      1296
+weighted avg       0.76      0.73      0.73      1296
+
