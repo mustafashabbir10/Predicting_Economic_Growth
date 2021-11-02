@@ -27,6 +27,7 @@ def main():
     DROPOUT = 0.5
     model = BERTbiLSTM(bert_model, HIDDEN_DIM, OUTPUT_DIM, N_LAYERS, BIDIRECTIONAL, DROPOUT)
     model.load_state_dict(torch.load('FinBERT-biLSTM_2.pt'))
+    model.to(device)
     
     print('Load news articles')
     unlabeled_news_df = pd.read_csv('sample_test.csv')
