@@ -70,7 +70,7 @@ gdelt_colName = pd.read_csv(r"Data/GDELT/CSV.header.dailyupdates.txt", sep='\t',
 sentiment_list = ["positive", "neutral", "negative"]
 start_time = time.time()
 
-for gdelt_list_counter in range(1500, 3101):#len(gdelt_list)):
+for gdelt_list_counter in range(0, len(gdelt_list)):
     
     zip_file_url = urlopen(gdelt_list.iloc[gdelt_list_counter]['hyperlink'])
     zip_file = ZipFile(BytesIO(zip_file_url.read()))
