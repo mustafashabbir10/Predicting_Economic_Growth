@@ -70,8 +70,8 @@ gdelt_colName = pd.read_csv(r"Data/GDELT/CSV.header.dailyupdates.txt", sep='\t',
 sentiment_list = ["positive", "neutral", "negative"]
 start_time = time.time()
 
-for gdelt_list_counter in range(0, len(gdelt_list)):
-	
+for gdelt_list_counter in range(1, len(gdelt_list)):
+    
     zip_file_url = urlopen(gdelt_list.iloc[gdelt_list_counter]['hyperlink'])
     zip_file = ZipFile(BytesIO(zip_file_url.read()))
     document_list = pd.read_csv(zip_file.open(zip_file.namelist()[0]), sep ='\t', header=None, names=gdelt_colName).set_index(['GLOBALEVENTID'])
@@ -94,9 +94,9 @@ for gdelt_list_counter in range(0, len(gdelt_list)):
                         for script in soup(["script", "style"]):    # kill all script and style elements
                             script.decompose()
                         text = soup.get_text()    # get text
-                             = (line.strip() for line in text.split    ())    # break into      and remove leading and trailing space on each
-                        chunks = (phrase.strip() for line in      for phrase in line.split("  "))    # break multi-head     into a line each
-                        text = '\n'.join(chunk for chunk in chunks if chunk)    # drop blank     
+                        lines = (line.strip() for line in text.splitlines())    # break into lines and remove leading and trailing space on each
+                        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))    # break multi-headlines into a line each
+                        text = '\n'.join(chunk for chunk in chunks if chunk)    # drop blank lines
                         text_matrix = text_matrix.append({'sentence': text}, ignore_index=True)
                     except:
                         exception_count += 1
