@@ -71,7 +71,7 @@ sentiment_list = ["positive", "neutral", "negative"]
 start_time = time.time()
 
 for gdelt_list_counter in range(0, len(gdelt_list)):
-    
+	
     zip_file_url = urlopen(gdelt_list.iloc[gdelt_list_counter]['hyperlink'])
     zip_file = ZipFile(BytesIO(zip_file_url.read()))
     document_list = pd.read_csv(zip_file.open(zip_file.namelist()[0]), sep ='\t', header=None, names=gdelt_colName).set_index(['GLOBALEVENTID'])
@@ -94,9 +94,9 @@ for gdelt_list_counter in range(0, len(gdelt_list)):
                         for script in soup(["script", "style"]):    # kill all script and style elements
                             script.decompose()
                         text = soup.get_text()    # get text
-                        lines = (line.strip() for line in text.splitlines())    # break into lines and remove leading and trailing space on each
-                        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))    # break multi-headlines into a line each
-                        text = '\n'.join(chunk for chunk in chunks if chunk)    # drop blank lines
+                             = (line.strip() for line in text.split    ())    # break into      and remove leading and trailing space on each
+                        chunks = (phrase.strip() for line in      for phrase in line.split("  "))    # break multi-head     into a line each
+                        text = '\n'.join(chunk for chunk in chunks if chunk)    # drop blank     
                         text_matrix = text_matrix.append({'sentence': text}, ignore_index=True)
                     except:
                         exception_count += 1
@@ -107,18 +107,21 @@ for gdelt_list_counter in range(0, len(gdelt_list)):
         sys.stdout.write("\rgdelt_list_counter = %s / %s ; doc_count = %s / %s ; time elasped: %s minutes." % (gdelt_list_counter + 1, len(gdelt_list), doc_count + 1, len(US_document_list), round((current_time-start_time)/60,2)))
         sys.stdout.flush()
     
-    text_matrix['sentiment_lr'] = lr_model.predict(text_matrix['sentence'])
-    text_matrix['sentiment_lstm']  = predict_unseen_test(lstm_model, create_data_loader(text_matrix, bert_tokenizer, MAX_LEN, BATCH_SIZE, True), device)['prediction']
-    
     news_year = int(str(zip_file.namelist()[0])[0:4])
     news_month = int(str(zip_file.namelist()[0])[4:6])
     news_date = int(str(zip_file.namelist()[0])[6:8])
     
-    sentiment_score_lr.loc[(news_year, news_month), 'exception'] += exception_count
-    sentiment_score_lstm.loc[(news_year, news_month), 'exception'] += exception_count
-    for i in sentiment_list:
-        sentiment_score_lr.loc[(news_year, news_month), i] += sum(text_matrix['sentiment_lr'] == i)
-        sentiment_score_lstm.loc[(news_year, news_month), i] += sum(text_matrix['sentiment_lstm'] == sentiment_list.index(i))
+    try:
+        text_matrix['sentiment_lr'] = lr_model.predict(text_matrix['sentence'])
+        text_matrix['sentiment_lstm']  = predict_unseen_test(lstm_model, create_data_loader(text_matrix, bert_tokenizer, MAX_LEN, BATCH_SIZE, True), device)['prediction']
+        
+        sentiment_score_lr.loc[(news_year, news_month), 'exception'] += exception_count
+        sentiment_score_lstm.loc[(news_year, news_month), 'exception'] += exception_count
+        for i in sentiment_list:
+            sentiment_score_lr.loc[(news_year, news_month), i] += sum(text_matrix['sentiment_lr'] == i)
+            sentiment_score_lstm.loc[(news_year, news_month), i] += sum(text_matrix['sentiment_lstm'] == sentiment_list.index(i))
+    except:
+        pass
     
     print("\rReading GEDLT progress: %s / %s ; Time Elasped: %s minutes." % (gdelt_list_counter + 1, len(gdelt_list), round((current_time-start_time)/60,2)))
     if (gdelt_list_counter % SAVING_FREQ == 0):
