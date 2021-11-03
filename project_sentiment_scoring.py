@@ -81,9 +81,9 @@ for gdelt_list_counter in range(0, len(gdelt_list)):
     for doc_count in range(0,len(US_document_list)):
         
         if (doc_count % READ_FREQ == 0):
-            news_year = int(str(US_document_list.iloc[doc_count, 0])[0:4])
-            news_month = int(str(US_document_list.iloc[doc_count, 0])[4:6])
-            news_date = int(str(US_document_list.iloc[doc_count, 0])[6:8])
+            #news_year = int(str(US_document_list.iloc[doc_count, 0])[0:4])
+            #news_month = int(str(US_document_list.iloc[doc_count, 0])[4:6])
+            #news_date = int(str(US_document_list.iloc[doc_count, 0])[6:8])
             news_url = document_list.iloc[doc_count, -1]
             exception_count = 0
             
@@ -109,6 +109,10 @@ for gdelt_list_counter in range(0, len(gdelt_list)):
     
     text_matrix['sentiment_lr'] = lr_model.predict(text_matrix['sentence'])
     text_matrix['sentiment_lstm']  = predict_unseen_test(lstm_model, create_data_loader(text_matrix, bert_tokenizer, MAX_LEN, BATCH_SIZE, True), device)['prediction']
+    
+	news_year = int(str(zip_file.namelist()[0])[0:4])
+	news_month = int(str(zip_file.namelist()[0])[4:6])
+	news_date = int(str(zip_file.namelist()[0])[6:8])
     
     sentiment_score_lr.loc[(news_year, news_month), 'exception'] += exception_count
     sentiment_score_lstm.loc[(news_year, news_month), 'exception'] += exception_count
