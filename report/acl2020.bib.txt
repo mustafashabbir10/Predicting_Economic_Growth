@@ -1,0 +1,51 @@
+@article{P1,
+    author    = {Shapiro, Adam Hale, Moritz Sudhof, and Daniel J. Wilson},
+    title     = {Measuring news sentiment},
+    journal   = {Journal of Econometrics},
+    year      = {2020}
+}
+
+@article{P2,
+    author    = {Malo, Pekka, et al.},
+    title     = {Good debt or bad debt: Detecting semantic orientations in economic texts},
+    journal   = {Journal of the Association for Information Science and Technology},
+	Pages = {782--796},
+    year      = {2014}
+}
+
+@article{P3,
+    author    = {Mishev, Kostadin, et al.},
+    title     = {Evaluation of sentiment analysis in finance: from lexicons to transformers},
+    journal   = {IEEE Access 8},
+    year      = {2020}
+}
+
+@article{P4,
+    author    = {Ardia, David, Keven Bluteau, and Kris Boudt},
+    title     = {Questioning the news about economic growth: Sparse forecasting using thousands of news-based sentiment values},
+    journal   = {International Journal of Forecasting},
+	Pages = {1370--1386},
+    year      = {2019}
+}
+
+@article{P5,
+    author    = {Larsen, Vegard H., Leif Anders Thorsrud, and Julia Zhulanova},
+    title     = {News-driven inflation expectations and information rigidities},
+    journal   = {Journal of Monetary Economics},
+	Pages = {507--520},
+    year      = {2021}
+}
+
+@article{P6,
+    author    = {Kalamara, Eleni, et al.},
+    title     = {Making text count: economic forecasting using newspaper text},
+    journal   = {Bank of England},
+    year      = {2020}
+}
+
+@article{P7,
+    author    = {Tilly, Sonja, Markus Ebner, and Giacomo Livan},
+    title     = {Macroeconomic forecasting through news, emotions and narrative},
+    journal   = {Expert Systems with Applications},
+    year      = {2021}
+}
