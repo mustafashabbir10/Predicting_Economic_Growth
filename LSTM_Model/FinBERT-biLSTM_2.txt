@@ -1,0 +1,1 @@
+A trained version of FinBERT-biLSTM_2.pt is stored at https://drive.google.com/drive/folders/1tKaMfPDLnUalATwDYjJ_fgc_JQ557cHn
