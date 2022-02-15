@@ -1,4 +1,4 @@
-# FinalProject
+# Predicting Economic Growth from Business News
 
 The main goal of this project to investigate if sentiment from newspaper can be useful in predicting macroeocnomics variables (unemployment rate, GDP, and CPI).
 
